@@ -80,6 +80,11 @@ namespace TrackerLibrary.DataAccess
             return GlobalConfig.TeamFile.FullFilePath().LoadFile().ConvertToTeamModels();
         }
 
+        public List<PrizeModel> GetPrizes_All()
+        {
+            return GlobalConfig.PrizesFile.FullFilePath().LoadFile().ConvertToPrizeModels();
+        }
+
         public void CreateTournament(TournamentModel model)
         {
             List<TournamentModel> tournaments = GlobalConfig.TournamentFile
