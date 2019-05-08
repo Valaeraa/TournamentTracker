@@ -29,7 +29,7 @@ namespace TrackerLibrary.DataAccess
                 model.Id = p.Get<int>("@id");
             }
         }
-        
+
         /// <summary>
         /// Saves a new prize to the database.
         /// </summary>
@@ -172,7 +172,7 @@ namespace TrackerLibrary.DataAccess
                         {
                             p.Add("@TeamCompetingID", entry.TeamCompeting.Id);
                         }
-                        
+
                         p.Add("@id", 0, dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                         connection.Execute("dbo.spMatchupEntries_Insert", p, commandType: CommandType.StoredProcedure);
@@ -213,6 +213,18 @@ namespace TrackerLibrary.DataAccess
             return output;
         }
 
+        public List<PrizeModel> GetPrizes_All()
+        {
+            List<PrizeModel> output;
+
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(GlobalConfig.CnnString(db)))
+            {
+                output = connection.Query<PrizeModel>("dbo.spPrizes_GetAll").ToList();
+            }
+
+            return output;
+        }
+
         public List<TournamentModel> GetTournament_All()
         {
             List<TournamentModel> output;
@@ -235,7 +247,7 @@ namespace TrackerLibrary.DataAccess
                     p.Add("@TournamentId", t.Id);
 
                     t.EnteredTeams = connection.Query<TeamModel>("dbo.spTeam_GetByTournament", p, commandType: CommandType.StoredProcedure).ToList();
-                    
+
                     foreach (TeamModel team in t.EnteredTeams)
                     {
                         p = new DynamicParameters();
@@ -313,9 +325,9 @@ namespace TrackerLibrary.DataAccess
                     p.Add("@id", model.Id);
                     p.Add("@WinnerId", model.Winner.Id);
 
-                    connection.Execute("dbo.spMatchups_Update", p, commandType: CommandType.StoredProcedure); 
+                    connection.Execute("dbo.spMatchups_Update", p, commandType: CommandType.StoredProcedure);
                 }
-                
+
                 foreach (MatchupEntryModel me in model.Entries)
                 {
                     if (me.TeamCompeting != null)
@@ -325,7 +337,7 @@ namespace TrackerLibrary.DataAccess
                         p.Add("@TeamCompetingId", me.TeamCompeting.Id);
                         p.Add("@Score", me.Score);
 
-                        connection.Execute("dbo.spMatchupEntries_Update", p, commandType: CommandType.StoredProcedure); 
+                        connection.Execute("dbo.spMatchupEntries_Update", p, commandType: CommandType.StoredProcedure);
                     }
                 }
             }
