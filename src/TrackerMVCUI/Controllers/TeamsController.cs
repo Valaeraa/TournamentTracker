@@ -39,7 +39,7 @@ namespace TrackerMVCUI.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (ModelState.IsValid && model.SelectedTeamMembers.Count > 0)
                 {
                     var t = new TeamModel()
                     {

@@ -54,11 +54,11 @@ namespace TrackerLibrary
             if (endingRound > startingRound)
             {
                 // Alert users
-                model.AlertUseersToNewRound();
+                model.AlertUsersToNewRound();
             }
         }
 
-        public static void AlertUseersToNewRound(this TournamentModel model)
+        public static void AlertUsersToNewRound(this TournamentModel model)
         {
             int currentRoundNumber = model.CheckCurrentRound();
 
@@ -110,10 +110,10 @@ namespace TrackerLibrary
                 EmailLogic.SendEmail(to, subject, body.ToString());
             }
 
-            if (p.CellphoneNumber.Length > 0)
-            {
-                SMSLogic.SendSMSMessage(p.CellphoneNumber, $"You have a new matchup with { competitor.TeamCompeting.TeamName }");
-            }
+            //if (p.CellphoneNumber.Length > 0)
+            //{
+            //    SMSLogic.SendSMSMessage(p.CellphoneNumber, $"You have a new matchup with { competitor.TeamCompeting.TeamName }");
+            //}
         }
 
         private static int CheckCurrentRound(this TournamentModel model)
