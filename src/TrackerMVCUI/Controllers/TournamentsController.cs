@@ -20,7 +20,7 @@ namespace TrackerMVCUI.Controllers
         // GET: Tournaments/Create
         public ActionResult Create()
         {
-            var input = new TournamentMVCModel();
+            var input = new TournamentMVCCreateModel();
 
             List<TeamModel> allTeams = GlobalConfig.Connection.GetTeam_All();
             List<PrizeModel> allPrizes = GlobalConfig.Connection.GetPrizes_All();
@@ -32,24 +32,28 @@ namespace TrackerMVCUI.Controllers
         }
 
         // POST: Tournaments/Create
-        [HttpPost]
         [ValidateAntiForgeryToken()]
-        public ActionResult Create(TournamentMVCModel model)
+        [HttpPost]
+        public ActionResult Create(TournamentMVCCreateModel model)
         {
             try
             {
                 if (ModelState.IsValid && model.SelectedEnteredTeams.Count > 0)
                 {
-                    var t = new TournamentModel()
-                    {
-                        TournamentName = model.TournamentName,
-                        EntryFee = model.EntryFee,
-                        EnteredTeams = model.SelectedEnteredTeams.Select(x => new TeamModel { Id = int.Parse(x) }).ToList(),
-                        Prizes = model.SelectedPrizes.Select(x => new PrizeModel { Id = int.Parse(x) }).ToList()
-                    };
+                    List<PrizeModel> allPrizes = GlobalConfig.Connection.GetPrizes_All();
+                    List<TeamModel> allTeams = GlobalConfig.Connection.GetTeam_All();
 
+                    TournamentModel t = new TournamentModel();
+                    t.TournamentName = model.TournamentName;
+                    t.EntryFee = model.EntryFee;
+                    //t.EnteredTeams = model.SelectedEnteredTeams.Select(x => allTeams.Where(y => y.Id == int.Parse(x)).First()).ToList();
+                    //t.Prizes = model.SelectedPrizes.Select(x => allPrizes.Where(y => y.Id == int.Parse(x)).First()).ToList();
+                    t.EnteredTeams = model.SelectedEnteredTeams.Select(x => new TeamModel { Id = int.Parse(x) }).ToList();
+                    t.Prizes = model.SelectedPrizes.Select(x => new PrizeModel { Id = int.Parse(x) }).ToList();
+
+                    // Wire our matchups
                     TournamentLogic.CreateRounds(t);
-                    
+
                     GlobalConfig.Connection.CreateTournament(t);
 
                     t.AlertUsersToNewRound();
@@ -61,7 +65,7 @@ namespace TrackerMVCUI.Controllers
                     return RedirectToAction("Create");
                 }
             }
-            catch
+            catch (Exception)
             {
                 return View();
             }
