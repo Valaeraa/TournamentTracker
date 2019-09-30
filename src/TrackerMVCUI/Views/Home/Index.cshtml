@@ -25,11 +25,6 @@
                 <p>Here you can set the entree fee for the tournament, set the prizes for first place and second place. Decide how to split the winning.</p>
                 <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
             </div>
-            @*<div class="col-md-4">
-                <h2>Getting Started</h2>
-                <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-                <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-            </div>*@
         </div>
     </div>
 
@@ -38,7 +33,7 @@
         <ul class="list-unstyled">
             @foreach (var item in Model)
             {
-                <li><a href="/">@item.TournamentName</a></li>
+                <li>@Html.ActionLink(item.TournamentName, "Details", "Tournaments", new { id = item.Id}, new { })</li>
             }
         </ul>
     </div>
