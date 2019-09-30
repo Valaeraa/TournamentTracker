@@ -120,9 +120,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\MatchupMVCModel.cs" />
+    <Compile Include="Models\RoundMVCModel.cs" />
     <Compile Include="Models\TeamMVCModel.cs" />
     <Compile Include="Models\TournamentMVCCreateModel.cs" />
-    <Compile Include="Models\TournamentMVCModel.cs" />
+    <Compile Include="Models\TournamentMVCDetailsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

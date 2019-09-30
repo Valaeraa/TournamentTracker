@@ -17,6 +17,21 @@ namespace TrackerMVCUI.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public ActionResult Details(int id)
+        {
+            List<TournamentModel> tournaments = GlobalConfig.Connection.GetTournament_All();
+
+            try
+            {
+                return View(tournaments.Where(x => x.Id == id).First());
+            }
+            catch
+            {
+
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
         // GET: Tournaments/Create
         public ActionResult Create()
         {
