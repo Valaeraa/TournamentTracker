@@ -70,7 +70,6 @@ namespace TrackerMVCUI.Controllers
 
                 return RedirectToAction("Index", "Home");
             }
-
         }
 
         private List<MatchupMVCModel> GetMatchups(List<MatchupModel> input)
