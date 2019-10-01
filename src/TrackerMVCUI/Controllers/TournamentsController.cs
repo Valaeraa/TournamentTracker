@@ -61,7 +61,6 @@ namespace TrackerMVCUI.Controllers
                         });
                 }
 
-
                 input.Matchups = GetMatchups(orderedRounds[roundId - 1]);
 
                 return View(input);
