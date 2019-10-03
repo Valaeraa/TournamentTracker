@@ -5,6 +5,10 @@
     @Html.AntiForgeryToken()
 
     @Html.HiddenFor(model => model.MatchupId)
+    @Html.HiddenFor(model => model.FirstTeamMatchupEntryId)
+    @Html.HiddenFor(model => model.SecondTeamMatchupEntryId)
+    @Html.HiddenFor(model => model.TournamentId)
+    @Html.HiddenFor(model => model.RoundNumber)
 
     <div class="form-horizontal">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })

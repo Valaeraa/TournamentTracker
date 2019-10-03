@@ -18,9 +18,48 @@ namespace TrackerMVCUI.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken()]
         public ActionResult EditTournamentMatchup(MatchupMVCModel model)
         {
-            return View();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    List<TournamentModel> tournaments = GlobalConfig.Connection.GetTournament_All();
+                    TournamentModel t = tournaments.Where(x => x.Id == model.TournamentId).First();
+                    MatchupModel foundMatchup = new MatchupModel();
+
+                    foreach (var round in t.Rounds)
+                    {
+                        foreach (var matchup in round)
+                        {
+                            if (matchup.Id == model.MatchupId)
+                            {
+                                foundMatchup = matchup;
+                            }
+                        }
+                    }
+
+                    for (int i = 0; i < foundMatchup.Entries.Count; i++)
+                    {
+                        if (i == 0)
+                        {
+                            foundMatchup.Entries[i].Score = model.FirstTeamScore;
+                        }
+                        else if (i == 1)
+                        {
+                            foundMatchup.Entries[i].Score = model.SecondTeamScore;
+                        }
+                    }
+
+                    TournamentLogic.UpdateTournamentResults(t);
+                }
+            }
+            catch
+            {
+            }
+
+            return RedirectToAction("Details", "Tournaments", new { id = model.TournamentId, roundId = model.RoundNumber });
         }
 
         public ActionResult Details(int id, int roundId = 0)
@@ -68,7 +107,7 @@ namespace TrackerMVCUI.Controllers
                 }
 
 
-                input.Matchups = GetMatchups(orderedRounds[roundId - 1]);
+                input.Matchups = GetMatchups(orderedRounds[roundId - 1], id, roundId);
 
                 return View(input);
             }
@@ -79,7 +118,7 @@ namespace TrackerMVCUI.Controllers
             }
         }
 
-        private List<MatchupMVCModel> GetMatchups(List<MatchupModel> input)
+        private List<MatchupMVCModel> GetMatchups(List<MatchupModel> input, int tournamentId, int roundId = 0)
         {
             var output = new List<MatchupMVCModel>();
 
@@ -117,12 +156,14 @@ namespace TrackerMVCUI.Controllers
                 output.Add(new MatchupMVCModel
                 {
                     MatchupId = item.Id,
+                    TournamentId = tournamentId,
+                    RoundNumber = roundId,
                     FirstTeamMatchupEntryId = item.Entries[0].Id,
                     FirstTeamName = teamOneName,
                     FirstTeamScore = item.Entries[0].Score,
                     SecondTeamMatchupEntryId = teamTwoId,
                     SecondTeamName = teamTwoName,
-                    SecondTeamScore = teamTwoScore
+                    SecondTeamScore = teamTwoScore,
                 });
             }
 
@@ -144,8 +185,8 @@ namespace TrackerMVCUI.Controllers
         }
 
         // POST: Tournaments/Create
-        [ValidateAntiForgeryToken()]
         [HttpPost]
+        [ValidateAntiForgeryToken()]
         public ActionResult Create(TournamentMVCCreateModel model)
         {
             try
@@ -158,10 +199,8 @@ namespace TrackerMVCUI.Controllers
                     TournamentModel t = new TournamentModel();
                     t.TournamentName = model.TournamentName;
                     t.EntryFee = model.EntryFee;
-                    //t.EnteredTeams = model.SelectedEnteredTeams.Select(x => allTeams.Where(y => y.Id == int.Parse(x)).First()).ToList();
-                    //t.Prizes = model.SelectedPrizes.Select(x => allPrizes.Where(y => y.Id == int.Parse(x)).First()).ToList();
-                    t.EnteredTeams = model.SelectedEnteredTeams.Select(x => new TeamModel { Id = int.Parse(x) }).ToList();
-                    t.Prizes = model.SelectedPrizes.Select(x => new PrizeModel { Id = int.Parse(x) }).ToList();
+                    t.EnteredTeams = model.SelectedEnteredTeams.Select(x => allTeams.Where(y => y.Id == int.Parse(x)).First()).ToList();
+                    t.Prizes = model.SelectedPrizes.Select(x => allPrizes.Where(y => y.Id == int.Parse(x)).First()).ToList();
 
                     // Wire our matchups
                     TournamentLogic.CreateRounds(t);
