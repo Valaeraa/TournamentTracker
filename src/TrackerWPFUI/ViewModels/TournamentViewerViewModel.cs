@@ -6,10 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using TrackerLibrary;
 using TrackerLibrary.Models;
+using TrackerWPFUI.EventModels;
 
 namespace TrackerWPFUI.ViewModels
 {
-    public class TournamentViewerViewModel : Screen
+    public class TournamentViewerViewModel : Screen, IHandle<SelectedTournamentEvent>
     {
         public TournamentModel Tournament { get; set; }
 
@@ -23,13 +24,12 @@ namespace TrackerWPFUI.ViewModels
         private double _teamTwoScore;
         private MatchupModel _selectedMatchup;
         private int _selectedRound = 0;
+        private readonly IEventAggregator _eventAggregator;
 
-        public TournamentViewerViewModel(TournamentModel model)
+        public TournamentViewerViewModel(IEventAggregator eventAggregator)
         {
-            Tournament = model;
-            TournamentName = model.TournamentName;
-
-            LoadRounds();
+            _eventAggregator = eventAggregator;
+            _eventAggregator.Subscribe(this);
         }
         
         public string TournamentName
@@ -247,6 +247,14 @@ namespace TrackerWPFUI.ViewModels
             }
 
             LoadMatchups();
+        }
+
+        public void Handle(SelectedTournamentEvent message)
+        {
+            Tournament = message.SelectedTournament;
+            TournamentName = message.SelectedTournament.TournamentName;
+
+            LoadRounds();
         }
     }
 }

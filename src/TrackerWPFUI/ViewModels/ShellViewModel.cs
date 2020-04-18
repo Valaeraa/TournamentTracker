@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TrackerLibrary;
 using TrackerLibrary.Models;
+using TrackerWPFUI.EventModels;
 
 namespace TrackerWPFUI.ViewModels
 {
@@ -14,12 +15,14 @@ namespace TrackerWPFUI.ViewModels
         private BindableCollection<TournamentModel> _existingTournaments;
         private TournamentModel _selectedTournament;
         private readonly IEventAggregator _eventAggregator;
+        private readonly TournamentViewerViewModel _tournamentViewerVM;
 
-        public ShellViewModel(IEventAggregator eventAggregator)
+        public ShellViewModel(IEventAggregator eventAggregator, TournamentViewerViewModel tournamentViewer)
         {
             // Initialize the database connections
             GlobalConfig.InitializeConnections(DatabaseType.Sql);
-            
+
+            _tournamentViewerVM = tournamentViewer;
             _eventAggregator = eventAggregator;
             _eventAggregator.Subscribe(this);
             //EventAggregationProvider.TrackerEventAggregator.Subscribe(this);
@@ -36,7 +39,9 @@ namespace TrackerWPFUI.ViewModels
         {
             if (SelectedTournament != null && !String.IsNullOrWhiteSpace(SelectedTournament.TournamentName))
             {
-                ActivateItem(new TournamentViewerViewModel(SelectedTournament));
+                _eventAggregator.PublishOnUIThread(new SelectedTournamentEvent(SelectedTournament));
+
+                ActivateItem(_tournamentViewerVM);
             }
         }
 
@@ -46,7 +51,6 @@ namespace TrackerWPFUI.ViewModels
             ExistingTournaments.Add(message);
             SelectedTournament = message;
         }
-
 
         public BindableCollection<TournamentModel> ExistingTournaments
         {
@@ -61,6 +65,7 @@ namespace TrackerWPFUI.ViewModels
             {
                 _selectedTournament = value;
                 NotifyOfPropertyChange(() => SelectedTournament);
+
                 LoadTournament();
             }
         }
