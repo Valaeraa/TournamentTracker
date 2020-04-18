@@ -11,11 +11,17 @@ namespace TrackerWPFUI.ViewModels
 {
     public class CreatePersonViewModel : Screen
     {
+        private readonly IEventAggregator _eventAggregator;
         private string _firstName = "";
         private string _lastName = "";
         private string _email = "";
         private string _cellphone = "";
         //private object emailValue;
+
+        public CreatePersonViewModel(IEventAggregator eventAggregator)
+        {
+            _eventAggregator = eventAggregator;
+        }
 
         public string FirstName
         {
@@ -62,7 +68,8 @@ namespace TrackerWPFUI.ViewModels
 
         public void CancelCreation()
         {
-            EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(new PersonModel());
+            _eventAggregator.PublishOnUIThread(new PersonModel());
+            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(new PersonModel());
 
             TryClose();
         }
@@ -90,8 +97,9 @@ namespace TrackerWPFUI.ViewModels
             };
 
             GlobalConfig.Connection.CreatePerson(p);
-            
-            EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(p);
+
+            _eventAggregator.PublishOnUIThread(p);
+            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(p);
 
             TryClose();
         }

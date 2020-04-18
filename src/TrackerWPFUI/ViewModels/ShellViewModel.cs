@@ -13,20 +13,23 @@ namespace TrackerWPFUI.ViewModels
     {
         private BindableCollection<TournamentModel> _existingTournaments;
         private TournamentModel _selectedTournament;
+        private readonly IEventAggregator _eventAggregator;
 
-        public ShellViewModel()
+        public ShellViewModel(IEventAggregator eventAggregator)
         {
             // Initialize the database connections
             GlobalConfig.InitializeConnections(DatabaseType.Sql);
-
-            EventAggregationProvider.TrackerEventAggregator.Subscribe(this);
+            
+            _eventAggregator = eventAggregator;
+            _eventAggregator.Subscribe(this);
+            //EventAggregationProvider.TrackerEventAggregator.Subscribe(this);
 
             _existingTournaments = new BindableCollection<TournamentModel>(GlobalConfig.Connection.GetTournament_All());
         }
 
         public void CreateTournament()
         {
-            ActivateItem(new CreateTournamentViewModel());
+            ActivateItem(IoC.Get<CreateTournamentViewModel>());// new CreateTournamentViewModel(_eventAggregator));
         }
 
         public void LoadTournament()

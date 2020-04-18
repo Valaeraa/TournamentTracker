@@ -18,11 +18,16 @@ namespace TrackerWPFUI.ViewModels
         private PersonModel _selectedTeamMemberToAdd;
         private BindableCollection<PersonModel> _selectedTeamMembers = new BindableCollection<PersonModel>();
         private PersonModel _selectedTeamMemberToRemove;
+        private readonly IEventAggregator _eventAggregator;
 
-        public CreateTeamViewModel()
+        public CreateTeamViewModel(IEventAggregator eventAggregator)
         {
             AvailibleTeamMembers = new BindableCollection<PersonModel>(GlobalConfig.Connection.GetPerson_All());
-            EventAggregationProvider.TrackerEventAggregator.Subscribe(this);
+
+
+            _eventAggregator = eventAggregator;
+            _eventAggregator.Subscribe(this);
+            //EventAggregationProvider.TrackerEventAggregator.Subscribe(this);
         }
 
         public string TeamName
@@ -112,7 +117,7 @@ namespace TrackerWPFUI.ViewModels
 
         public void CreateMember()
         {
-            ActivateItem(new CreatePersonViewModel());
+            ActivateItem(IoC.Get<CreatePersonViewModel>());//new CreatePersonViewModel(_eventAggregator));
 
             SelectedTeamMembersIsVisible = false;
             AddPersonIsVisible = true;
@@ -136,7 +141,8 @@ namespace TrackerWPFUI.ViewModels
 
         public void CancelCreation()
         {
-            EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(new TeamModel());
+            _eventAggregator.PublishOnUIThread(new TeamModel());
+            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(new TeamModel());
 
             TryClose();
         }
@@ -172,8 +178,9 @@ namespace TrackerWPFUI.ViewModels
             };
 
             GlobalConfig.Connection.CreateTeam(t);
-            
-            EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(t);
+
+            _eventAggregator.PublishOnUIThread(t);
+            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(t);
 
             TryClose();
         }

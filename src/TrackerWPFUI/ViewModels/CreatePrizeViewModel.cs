@@ -11,6 +11,13 @@ namespace TrackerWPFUI.ViewModels
 {
     public class CreatePrizeViewModel : Screen
     {
+        private readonly IEventAggregator _eventAggregator;
+
+        public CreatePrizeViewModel(IEventAggregator eventAggregator)
+        {
+            _eventAggregator = eventAggregator;
+        }
+
         private int _placeNumber;
 
         public int PlaceNumber
@@ -61,7 +68,8 @@ namespace TrackerWPFUI.ViewModels
 
         public void CancelCreation()
         {
-            EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(new PrizeModel());
+            _eventAggregator.PublishOnUIThread(new PrizeModel());
+            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(new PrizeModel());
 
             TryClose();
         }
@@ -83,7 +91,8 @@ namespace TrackerWPFUI.ViewModels
 
             GlobalConfig.Connection.CreatePrize(model);
 
-            EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(model);
+            _eventAggregator.PublishOnUIThread(model);
+            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(model);
 
             TryClose();
         }
