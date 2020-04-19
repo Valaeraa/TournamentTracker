@@ -33,7 +33,6 @@ namespace TrackerWPFUI.ViewModels
             }
         }
 
-
         public string LastName
         {
             get { return _lastName; }
@@ -44,7 +43,6 @@ namespace TrackerWPFUI.ViewModels
             }
         }
 
-
         public string Email
         {
             get { return _email; }
@@ -54,7 +52,6 @@ namespace TrackerWPFUI.ViewModels
                 NotifyOfPropertyChange(() => Email);
             }
         }
-
 
         public string Cellphone
         {
@@ -69,7 +66,6 @@ namespace TrackerWPFUI.ViewModels
         public void CancelCreation()
         {
             _eventAggregator.PublishOnUIThread(new PersonModel());
-            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(new PersonModel());
 
             TryClose();
         }
@@ -99,7 +95,6 @@ namespace TrackerWPFUI.ViewModels
             GlobalConfig.Connection.CreatePerson(p);
 
             _eventAggregator.PublishOnUIThread(p);
-            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(p);
 
             TryClose();
         }

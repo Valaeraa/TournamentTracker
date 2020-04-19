@@ -11,6 +11,8 @@ namespace TrackerWPFUI.ViewModels
 {
     public class CreateTournamentViewModel : Conductor<object>.Collection.AllActive, IHandle<TeamModel>, IHandle<PrizeModel>
     {
+        private readonly IEventAggregator _eventAggregator;
+
         private string _tournamentName = "";
         private decimal _entryFee;
         private BindableCollection<TeamModel> _availibleTeams = new BindableCollection<TeamModel>();
@@ -25,21 +27,14 @@ namespace TrackerWPFUI.ViewModels
         private bool _addTeamIsVisible = false;
         private bool _selectedPrizesIsVisible = true;
         private bool _addPrizeIsVisible = false;
-        private readonly IEventAggregator _eventAggregator;
 
         public CreateTournamentViewModel(IEventAggregator eventAggregator)
         {
-            // Initialize the avalibleTeams list with all of the teams in our database/text files
-            AvailibleTeams = new BindableCollection<TeamModel>(GlobalConfig.Connection.GetTeam_All());
             _eventAggregator = eventAggregator;
             _eventAggregator.Subscribe(this);
-            //EventAggregationProvider.TrackerEventAggregator.Subscribe(this);
-        }
 
-        protected override void OnViewLoaded(object view)
-        {
-            base.OnViewLoaded(view);
-
+            // Initialize the avalibleTeams list with all of the teams in our database/text files
+            AvailibleTeams = new BindableCollection<TeamModel>(GlobalConfig.Connection.GetTeam_All());
         }
 
         public string TournamentName
@@ -179,7 +174,6 @@ namespace TrackerWPFUI.ViewModels
             }
         }
 
-
         public bool CanAddTeam
         {
             get
@@ -199,7 +193,7 @@ namespace TrackerWPFUI.ViewModels
         public void CreateTeam()
         {
             // Create a new CreateTeamViewModel() and add it to the property
-            ActiveAddTeamView = IoC.Get<CreateTeamViewModel>(); //new CreateTeamViewModel(_eventAggregator);
+            ActiveAddTeamView = IoC.Get<CreateTeamViewModel>();
 
             // Items is a list of controls
             // Add the property to the items list
@@ -227,7 +221,7 @@ namespace TrackerWPFUI.ViewModels
 
         public void CreatePrize()
         {
-            ActiveAddPrizeView = IoC.Get<CreatePrizeViewModel>();//new CreatePrizeViewModel(_eventAggregator);
+            ActiveAddPrizeView = IoC.Get<CreatePrizeViewModel>();
 
             Items.Add(ActiveAddPrizeView);
 
@@ -272,8 +266,7 @@ namespace TrackerWPFUI.ViewModels
 
         public void CreateTournament()
         {
-            // Create our tournament model
-            TournamentModel tm = new TournamentModel
+            var tm = new TournamentModel
             {
                 TournamentName = TournamentName,
                 EntryFee = EntryFee,
@@ -281,18 +274,13 @@ namespace TrackerWPFUI.ViewModels
                 EnteredTeams = SelectedTeams.ToList()
             };
 
-            // TODO - Wire our matchups
             TournamentLogic.CreateRounds(tm);
 
-            // Create Tournament entry
-            // Create all of the prizes entries
-            // Create all of the teams entries
             GlobalConfig.Connection.CreateTournament(tm);
 
             tm.AlertUsersToNewRound();
 
             _eventAggregator.PublishOnUIThread(tm);
-            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(tm);
 
             TryClose();
         }

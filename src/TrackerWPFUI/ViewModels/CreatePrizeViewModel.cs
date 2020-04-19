@@ -13,12 +13,15 @@ namespace TrackerWPFUI.ViewModels
     {
         private readonly IEventAggregator _eventAggregator;
 
+        private int _placeNumber;
+        private string _placeName;
+        private decimal _prizeAmount;
+        private double _prizePercentage;
+
         public CreatePrizeViewModel(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
         }
-
-        private int _placeNumber;
 
         public int PlaceNumber
         {
@@ -30,8 +33,6 @@ namespace TrackerWPFUI.ViewModels
             }
         }
 
-        private string _placeName;
-
         public string PlaceName
         {
             get { return _placeName; }
@@ -42,8 +43,6 @@ namespace TrackerWPFUI.ViewModels
             }
         }
 
-        private decimal _prizeAmount;
-
         public decimal PrizeAmount
         {
             get { return _prizeAmount; }
@@ -53,8 +52,6 @@ namespace TrackerWPFUI.ViewModels
                 NotifyOfPropertyChange(() => PrizeAmount);
             }
         }
-
-        private double _prizePercentage;
 
         public double PrizePercentage
         {
@@ -69,7 +66,6 @@ namespace TrackerWPFUI.ViewModels
         public void CancelCreation()
         {
             _eventAggregator.PublishOnUIThread(new PrizeModel());
-            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(new PrizeModel());
 
             TryClose();
         }
@@ -81,7 +77,7 @@ namespace TrackerWPFUI.ViewModels
 
         public void CreatePrize(int placeNumber, string placeName, decimal prizeAmount, double prizePercentage)
         {
-            PrizeModel model = new PrizeModel
+            var model = new PrizeModel
             {
                 PlaceNumber = placeNumber,
                 PlaceName = placeName,
@@ -92,7 +88,6 @@ namespace TrackerWPFUI.ViewModels
             GlobalConfig.Connection.CreatePrize(model);
 
             _eventAggregator.PublishOnUIThread(model);
-            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(model);
 
             TryClose();
         }

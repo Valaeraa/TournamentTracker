@@ -12,10 +12,11 @@ namespace TrackerWPFUI.ViewModels
 {
     public class ShellViewModel : Conductor<object>, IHandle<TournamentModel>
     {
-        private BindableCollection<TournamentModel> _existingTournaments;
-        private TournamentModel _selectedTournament;
         private readonly IEventAggregator _eventAggregator;
         private readonly TournamentViewerViewModel _tournamentViewerVM;
+
+        private BindableCollection<TournamentModel> _existingTournaments;
+        private TournamentModel _selectedTournament;
 
         public ShellViewModel(IEventAggregator eventAggregator, TournamentViewerViewModel tournamentViewer)
         {
@@ -25,14 +26,31 @@ namespace TrackerWPFUI.ViewModels
             _tournamentViewerVM = tournamentViewer;
             _eventAggregator = eventAggregator;
             _eventAggregator.Subscribe(this);
-            //EventAggregationProvider.TrackerEventAggregator.Subscribe(this);
 
             _existingTournaments = new BindableCollection<TournamentModel>(GlobalConfig.Connection.GetTournament_All());
         }
 
+        public BindableCollection<TournamentModel> ExistingTournaments
+        {
+            get { return _existingTournaments; }
+            set { _existingTournaments = value; }
+        }
+
+        public TournamentModel SelectedTournament
+        {
+            get { return _selectedTournament; }
+            set
+            {
+                _selectedTournament = value;
+                NotifyOfPropertyChange(() => SelectedTournament);
+
+                LoadTournament();
+            }
+        }
+
         public void CreateTournament()
         {
-            ActivateItem(IoC.Get<CreateTournamentViewModel>());// new CreateTournamentViewModel(_eventAggregator));
+            ActivateItem(IoC.Get<CreateTournamentViewModel>());
         }
 
         public void LoadTournament()
@@ -50,24 +68,6 @@ namespace TrackerWPFUI.ViewModels
             // Open the tournament viewer to the given tournament
             ExistingTournaments.Add(message);
             SelectedTournament = message;
-        }
-
-        public BindableCollection<TournamentModel> ExistingTournaments
-        {
-            get { return _existingTournaments; }
-            set { _existingTournaments = value; }
-        }
-        
-        public TournamentModel SelectedTournament
-        {
-            get { return _selectedTournament; }
-            set
-            {
-                _selectedTournament = value;
-                NotifyOfPropertyChange(() => SelectedTournament);
-
-                LoadTournament();
-            }
         }
     }
 }

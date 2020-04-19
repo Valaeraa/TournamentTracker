@@ -14,6 +14,8 @@ namespace TrackerWPFUI.ViewModels
     {
         public TournamentModel Tournament { get; set; }
 
+        private readonly IEventAggregator _eventAggregator;
+
         private string _tournamentName;
         private BindableCollection<int> _rounds = new BindableCollection<int>();
         private BindableCollection<MatchupModel> _matchups = new BindableCollection<MatchupModel>();
@@ -24,7 +26,6 @@ namespace TrackerWPFUI.ViewModels
         private double _teamTwoScore;
         private MatchupModel _selectedMatchup;
         private int _selectedRound = 0;
-        private readonly IEventAggregator _eventAggregator;
 
         public TournamentViewerViewModel(IEventAggregator eventAggregator)
         {

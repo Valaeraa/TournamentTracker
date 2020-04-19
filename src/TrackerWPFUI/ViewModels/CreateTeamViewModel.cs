@@ -11,6 +11,8 @@ namespace TrackerWPFUI.ViewModels
 {
     public class CreateTeamViewModel : Conductor<object>, IHandle<PersonModel>
     {
+        private readonly IEventAggregator _eventAggregator;
+
         private string _teamName = "";
         private bool _selectedTeamMembersIsVisible = true;
         private bool _addPersonIsVisible = false;
@@ -18,16 +20,13 @@ namespace TrackerWPFUI.ViewModels
         private PersonModel _selectedTeamMemberToAdd;
         private BindableCollection<PersonModel> _selectedTeamMembers = new BindableCollection<PersonModel>();
         private PersonModel _selectedTeamMemberToRemove;
-        private readonly IEventAggregator _eventAggregator;
 
         public CreateTeamViewModel(IEventAggregator eventAggregator)
         {
-            AvailibleTeamMembers = new BindableCollection<PersonModel>(GlobalConfig.Connection.GetPerson_All());
-
-
             _eventAggregator = eventAggregator;
             _eventAggregator.Subscribe(this);
-            //EventAggregationProvider.TrackerEventAggregator.Subscribe(this);
+
+            AvailibleTeamMembers = new BindableCollection<PersonModel>(GlobalConfig.Connection.GetPerson_All());
         }
 
         public string TeamName
@@ -50,7 +49,7 @@ namespace TrackerWPFUI.ViewModels
                 NotifyOfPropertyChange(() => SelectedTeamMembersIsVisible);
             }
         }
-        
+
         public bool AddPersonIsVisible
         {
             get { return _addPersonIsVisible; }
@@ -66,7 +65,7 @@ namespace TrackerWPFUI.ViewModels
             get { return _availibleTeamMembers; }
             set { _availibleTeamMembers = value; }
         }
-        
+
         public PersonModel SelectedTeamMemberToAdd
         {
             get { return _selectedTeamMemberToAdd; }
@@ -77,7 +76,7 @@ namespace TrackerWPFUI.ViewModels
                 NotifyOfPropertyChange(() => CanAddMember);
             }
         }
-        
+
         public BindableCollection<PersonModel> SelectedTeamMembers
         {
             get { return _selectedTeamMembers; }
@@ -87,7 +86,7 @@ namespace TrackerWPFUI.ViewModels
                 NotifyOfPropertyChange(() => CanCreateTeam);
             }
         }
-        
+
         public PersonModel SelectedTeamMemberToRemove
         {
             get { return _selectedTeamMemberToRemove; }
@@ -117,7 +116,7 @@ namespace TrackerWPFUI.ViewModels
 
         public void CreateMember()
         {
-            ActivateItem(IoC.Get<CreatePersonViewModel>());//new CreatePersonViewModel(_eventAggregator));
+            ActivateItem(IoC.Get<CreatePersonViewModel>());
 
             SelectedTeamMembersIsVisible = false;
             AddPersonIsVisible = true;
@@ -142,11 +141,10 @@ namespace TrackerWPFUI.ViewModels
         public void CancelCreation()
         {
             _eventAggregator.PublishOnUIThread(new TeamModel());
-            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(new TeamModel());
 
             TryClose();
         }
-        
+
         public bool CanCreateTeam
         {
             get
@@ -180,7 +178,6 @@ namespace TrackerWPFUI.ViewModels
             GlobalConfig.Connection.CreateTeam(t);
 
             _eventAggregator.PublishOnUIThread(t);
-            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(t);
 
             TryClose();
         }
@@ -189,7 +186,7 @@ namespace TrackerWPFUI.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(message.FullName))
             {
-                SelectedTeamMembers.Add(message); 
+                SelectedTeamMembers.Add(message);
                 NotifyOfPropertyChange(() => CanCreateTeam);
             }
 
