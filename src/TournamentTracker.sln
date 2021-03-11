@@ -1,15 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.329
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31105.61
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackerLibrary", "TrackerLibrary\TrackerLibrary.csproj", "{55399E3A-F4F9-4127-8DA2-5F4D26EF7565}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrackerLibrary", "TrackerLibrary\TrackerLibrary.csproj", "{55399E3A-F4F9-4127-8DA2-5F4D26EF7565}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackerWinFormUI", "TrackerUI\TrackerWinFormUI.csproj", "{2D220BBC-DE45-4BB4-8C10-47C5F020A99A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrackerWinFormUI", "TrackerUI\TrackerWinFormUI.csproj", "{2D220BBC-DE45-4BB4-8C10-47C5F020A99A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackerWPFUI", "TrackerWPFUI\TrackerWPFUI.csproj", "{7E687257-E460-4FBD-A136-F780F0FC4EA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrackerWPFUI", "TrackerWPFUI\TrackerWPFUI.csproj", "{7E687257-E460-4FBD-A136-F780F0FC4EA3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackerMVCUI", "TrackerMVCUI\TrackerMVCUI.csproj", "{133F8331-07C0-487F-B794-2B3170FCEAF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackerWebUI", "TrackerWebUI\TrackerWebUI.csproj", "{11AC78F9-3E84-4795-B756-5124D18FACDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{133F8331-07C0-487F-B794-2B3170FCEAF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{133F8331-07C0-487F-B794-2B3170FCEAF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{133F8331-07C0-487F-B794-2B3170FCEAF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11AC78F9-3E84-4795-B756-5124D18FACDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11AC78F9-3E84-4795-B756-5124D18FACDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11AC78F9-3E84-4795-B756-5124D18FACDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11AC78F9-3E84-4795-B756-5124D18FACDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
