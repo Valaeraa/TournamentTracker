@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TrackerLibrary;
 using TrackerLibrary.Models;
@@ -17,33 +18,32 @@ namespace TrackerWPFUI.ViewModels
         public ShellViewModel()
         {
             // Initialize the database connections
-            GlobalConfig.InitializeConnections(DatabaseType.Sql);
+            GlobalConfig.InitializeConnections(DatabaseType.TextFile);
 
-            EventAggregationProvider.TrackerEventAggregator.Subscribe(this);
+            EventAggregationProvider.TrackerEventAggregator.SubscribeOnPublishedThread(this);
 
             _existingTournaments = new BindableCollection<TournamentModel>(GlobalConfig.Connection.GetTournament_All());
         }
 
-        public void CreateTournament()
+        public async Task CreateTournament()
         {
-            ActivateItem(new CreateTournamentViewModel());
+            await ActivateItemAsync(new CreateTournamentViewModel());
         }
 
-        public void LoadTournament()
+        public async Task LoadTournament()
         {
             if (SelectedTournament != null && !String.IsNullOrWhiteSpace(SelectedTournament.TournamentName))
             {
-                ActivateItem(new TournamentViewerViewModel(SelectedTournament));
+                await ActivateItemAsync(new TournamentViewerViewModel(SelectedTournament));
             }
         }
 
-        public void Handle(TournamentModel message)
+        public async Task HandleAsync(TournamentModel message, CancellationToken cancellationToken)
         {
             // Open the tournament viewer to the given tournament
             ExistingTournaments.Add(message);
             SelectedTournament = message;
         }
-
 
         public BindableCollection<TournamentModel> ExistingTournaments
         {

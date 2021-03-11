@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TrackerLibrary;
 using TrackerLibrary.Models;
@@ -31,7 +32,7 @@ namespace TrackerWPFUI.ViewModels
             // Initialize the avalibleTeams list with all of the teams in our database/text files
             AvailibleTeams = new BindableCollection<TeamModel>(GlobalConfig.Connection.GetTeam_All());
 
-            EventAggregationProvider.TrackerEventAggregator.Subscribe(this);
+            EventAggregationProvider.TrackerEventAggregator.SubscribeOnPublishedThread(this);
         }
 
         public string TournamentName
@@ -262,7 +263,7 @@ namespace TrackerWPFUI.ViewModels
             }
         }
 
-        public void CreateTournament()
+        public async Task CreateTournament()
         {
             // Create our tournament model
             TournamentModel tm = new TournamentModel
@@ -283,14 +284,14 @@ namespace TrackerWPFUI.ViewModels
 
             tm.AlertUsersToNewRound();
 
-            EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(tm);
+            await EventAggregationProvider .TrackerEventAggregator.PublishOnUIThreadAsync(tm);
 
-            TryClose();
+            await TryCloseAsync();
         }
 
-        public void Handle(TeamModel message)
+        public async Task HandleAsync(TeamModel message, CancellationToken cancellationToken)
         {
-            if (!String.IsNullOrWhiteSpace(message.TeamName))
+            if (!string.IsNullOrWhiteSpace(message.TeamName))
             {
                 SelectedTeams.Add(message);
                 NotifyOfPropertyChange(() => CanCreateTournament);
@@ -300,9 +301,9 @@ namespace TrackerWPFUI.ViewModels
             AddTeamIsVisible = false;
         }
 
-        public void Handle(PrizeModel message)
+        public async Task HandleAsync(PrizeModel message, CancellationToken cancellationToken)
         {
-            if (!String.IsNullOrWhiteSpace(message.PlaceName))
+            if (!string.IsNullOrWhiteSpace(message.PlaceName))
             {
                 SelectedPrizes.Add(message);
             }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TrackerLibrary;
 using TrackerLibrary.Models;
@@ -22,7 +23,7 @@ namespace TrackerWPFUI.ViewModels
         public CreateTeamViewModel()
         {
             AvailibleTeamMembers = new BindableCollection<PersonModel>(GlobalConfig.Connection.GetPerson_All());
-            EventAggregationProvider.TrackerEventAggregator.Subscribe(this);
+            EventAggregationProvider.TrackerEventAggregator.SubscribeOnPublishedThread(this);
         }
 
         public string TeamName
@@ -110,9 +111,9 @@ namespace TrackerWPFUI.ViewModels
             NotifyOfPropertyChange(() => CanCreateTeam);
         }
 
-        public void CreateMember()
+        public async Task CreateMember()
         {
-            ActivateItem(new CreatePersonViewModel());
+            await ActivateItemAsync(new CreatePersonViewModel());
 
             SelectedTeamMembersIsVisible = false;
             AddPersonIsVisible = true;
@@ -134,11 +135,11 @@ namespace TrackerWPFUI.ViewModels
             NotifyOfPropertyChange(() => CanCreateTeam);
         }
 
-        public void CancelCreation()
+        public async Task CancelCreation()
         {
-            EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(new TeamModel());
+            await EventAggregationProvider .TrackerEventAggregator.PublishOnUIThreadAsync(new TeamModel());
 
-            TryClose();
+            await TryCloseAsync();
         }
         
         public bool CanCreateTeam
@@ -163,7 +164,7 @@ namespace TrackerWPFUI.ViewModels
             }
         }
 
-        public void CreateTeam()
+        public async Task CreateTeam()
         {
             TeamModel t = new TeamModel
             {
@@ -173,16 +174,16 @@ namespace TrackerWPFUI.ViewModels
 
             GlobalConfig.Connection.CreateTeam(t);
             
-            EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(t);
+            await EventAggregationProvider.TrackerEventAggregator.PublishOnUIThreadAsync(t);
 
-            TryClose();
+            await TryCloseAsync();
         }
 
-        public void Handle(PersonModel message)
+        public async Task HandleAsync(PersonModel message, CancellationToken cancellationToken)
         {
             if (!string.IsNullOrWhiteSpace(message.FullName))
             {
-                SelectedTeamMembers.Add(message); 
+                SelectedTeamMembers.Add(message);
                 NotifyOfPropertyChange(() => CanCreateTeam);
             }
 

@@ -59,11 +59,11 @@ namespace TrackerWPFUI.ViewModels
             }
         }
 
-        public void CancelCreation()
+        public async Task CancelCreation()
         {
-            EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(new PrizeModel());
+            await EventAggregationProvider.TrackerEventAggregator.PublishOnUIThreadAsync(new PrizeModel());
 
-            TryClose();
+            await TryCloseAsync();
         }
 
         public bool CanCreatePrize(int placeNumber, string placeName, decimal prizeAmount, double prizePercentage)
@@ -71,7 +71,7 @@ namespace TrackerWPFUI.ViewModels
             return ValidateForm(placeNumber, placeName, prizeAmount, prizePercentage);
         }
 
-        public void CreatePrize(int placeNumber, string placeName, decimal prizeAmount, double prizePercentage)
+        public async Task CreatePrize(int placeNumber, string placeName, decimal prizeAmount, double prizePercentage)
         {
             PrizeModel model = new PrizeModel
             {
@@ -83,9 +83,9 @@ namespace TrackerWPFUI.ViewModels
 
             GlobalConfig.Connection.CreatePrize(model);
 
-            EventAggregationProvider.TrackerEventAggregator.PublishOnUIThread(model);
+            await EventAggregationProvider .TrackerEventAggregator.PublishOnUIThreadAsync(model);
 
-            TryClose();
+            await TryCloseAsync();
         }
 
         private bool ValidateForm(int placeNumber, string placeName, decimal prizeAmount, double prizePercentage)
