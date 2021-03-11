@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Mail;
+using System.Net;
 
 namespace TrackerLibrary
 {
@@ -35,7 +36,13 @@ namespace TrackerLibrary
             mail.Body = body;
             mail.IsBodyHtml = true;
 
-            SmtpClient client = new SmtpClient();
+            SmtpClient client = new SmtpClient(GlobalConfig.AppKeyLookup("smtpServer"),
+                int.Parse(GlobalConfig.AppKeyLookup("smtpPort")));
+
+            client.UseDefaultCredentials = false;
+            client.Credentials = new NetworkCredential(GlobalConfig.AppKeyLookup("smtpUsername"),
+                GlobalConfig.AppKeyLookup("smtpPassword"));
+            client.EnableSsl = bool.Parse(GlobalConfig.AppKeyLookup("smtpEnableSsl"));
 
             client.Send(mail);
         }
