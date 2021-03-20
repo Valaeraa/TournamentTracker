@@ -41,8 +41,8 @@
                 @foreach (var item in Model.Matchups)
                 {
                     <div class="col-md-6">
-                        <partial name="_EditMatchup" for="@item" />
-                        @*@Html.Partial("_EditMatchup", item)*@
+                        @*<partial name="_EditMatchup" for="@item" />*@
+                        @Html.Partial("_EditMatchup", item)
                     </div>
                 }
             </div>
