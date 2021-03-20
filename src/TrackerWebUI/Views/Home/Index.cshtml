@@ -1,8 +1,40 @@
-﻿@{
+﻿@model IEnumerable<TrackerLibrary.Models.TournamentModel>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row">
+    <div class="col-md-8">
+        <div class="jumbotron">
+            <h1>Tournaments</h1>
+            <p class="lead">Track your tournaments. Compete againts friends or rivals and have a great time doing it.</p>
+            <p>@Html.ActionLink("Create a Tournament", "Create", "Tournaments", new { area = "" }, new { @class = "btn btn-info btn-lg" })</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Teams</h2>
+                <p>
+                    Here you can customize your team. Name your team, add members or remove members.
+                </p>
+                <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+            </div>
+            <div class="col-md-6">
+                <h2>Prizes</h2>
+                <p>Here you can set the entree fee for the tournament, set the prizes for first place and second place. Decide how to split the winning.</p>
+                <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <h2>Current Tournaments</h2>
+        <ul class="list-unstyled">
+            @foreach (var item in Model)
+            {
+                <li>@Html.ActionLink(item.TournamentName, "Details", "Tournaments", new { id = item.Id }, new { })</li>
+            }
+        </ul>
+    </div>
 </div>
