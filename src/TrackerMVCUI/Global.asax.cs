@@ -19,7 +19,7 @@ namespace TrackerMVCUI
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             // Initialize the database connections
-            GlobalConfig.InitializeConnections(DatabaseType.Sql);
+            GlobalConfig.InitializeConnections(DatabaseType.TextFile);
         }
     }
 }
