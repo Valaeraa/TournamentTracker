@@ -1,5 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
+using Serilog.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,16 +21,35 @@ namespace TrackerUI
         [STAThread]
         static void Main(string[] args)
         {
-            // Can create empty string array instead
-            var host = CreateHostBuilder(args).Build();
+            // Move to appsettings
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .WriteTo.File(@"C:\Users\bruno\Documents\Github\TournamentTracker\WinFormsLog.txt")
+                .CreateLogger();
 
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            try
+            {
+                // Can create empty string array instead
+                var host = CreateHostBuilder(args).Build();
 
-            // Initialize the database connections
-            GlobalConfig.InitializeConnections(DatabaseType.TextFile);
-            Application.Run(host.Services.GetService<TournamentDashboardForm>());
+                Application.SetHighDpiMode(HighDpiMode.SystemAware);
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+
+                // Initialize the database connections
+                GlobalConfig.InitializeConnections(DatabaseType.TextFile);
+                Application.Run(host.Services.GetService<TournamentDashboardForm>());
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "There was a major problem that crashed the application");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)
@@ -35,6 +58,19 @@ namespace TrackerUI
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddTransient<TournamentDashboardForm>();
+
+                    services.AddSingleton<ILoggerFactory>(x =>
+                    {
+                        var providerCollection = x.GetService<LoggerProviderCollection>();
+                        var factory = new SerilogLoggerFactory(null, true, providerCollection);
+
+                        foreach (var provider in x.GetServices<ILoggerProvider>())
+                        {
+                            factory.AddProvider(provider);
+                        }
+
+                        return factory;
+                    });
                 });
         }
     }
