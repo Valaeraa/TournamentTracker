@@ -6,11 +6,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using TrackerLibrary.Models;
 using TrackerLibrary;
+using Microsoft.Extensions.Logging;
 
 namespace TrackerWebUI.Controllers
 {
     public class PeopleController : Controller
     {
+        private readonly ILogger<PeopleController> _logger;
+
+        public PeopleController(ILogger<PeopleController> logger)
+        {
+            _logger = logger;
+        }
+
         // GET: People
         public ActionResult Index()
         {

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TrackerLibrary;
+using TrackerLibrary.DataAccess;
 
 namespace TrackerWebUI
 {
@@ -25,8 +26,9 @@ namespace TrackerWebUI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddTransient<IDataConnection, TextConnection>();
 
-            GlobalConfig.InitializeConnections(DatabaseType.TextFile);
+            //GlobalConfig.InitializeConnections(DatabaseType.TextFile);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -8,11 +8,19 @@ using TrackerLibrary.Models;
 using TrackerLibrary;
 using TrackerWebUI.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 
 namespace TrackerWebUI.Controllers
 {
     public class TeamsController : Controller
     {
+        private readonly ILogger<TeamsController> _logger;
+
+        public TeamsController(ILogger<TeamsController> logger)
+        {
+            _logger = logger;
+        }
+
         // GET: TeamsController
         public ActionResult Index()
         {

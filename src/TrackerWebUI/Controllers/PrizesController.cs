@@ -6,11 +6,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using TrackerLibrary.Models;
 using TrackerLibrary;
+using Microsoft.Extensions.Logging;
 
 namespace TrackerWebUI.Controllers
 {
     public class PrizesController : Controller
     {
+        private readonly ILogger<PrizesController> _logger;
+
+        public PrizesController(ILogger<PrizesController> logger)
+        {
+            _logger = logger;
+        }
+
         // GET: PrizesController
         public ActionResult Index()
         {
