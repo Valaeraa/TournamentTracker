@@ -5,10 +5,9 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Tournament: @Html.DisplayNameFor(model => model.TournamentName)</h1>
+<h2>Tournament: @Html.DisplayFor(model => model.TournamentName)</h2>
 
 <div>
-    <h4>TournamentMVCDetailsModel</h4>
     <hr />
     <div class="row">
         <div class="col-md-3">
@@ -35,20 +34,19 @@
                 }
             </ul>
         </div>
-
         <div class="col-md-9">
             <div class="row">
                 @foreach (var item in Model.Matchups)
                 {
                     <div class="col-md-6">
-                        @*<partial name="_EditMatchup" for="@item" />*@
-                        @Html.Partial("_EditMatchup", item)
+                        @Html.PartialAsync("_EditMatchup", item)
                     </div>
                 }
             </div>
         </div>
     </div>
 </div>
+
 <div>
     @*@Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |*@
     <a asp-action="Index">Back to List</a>
