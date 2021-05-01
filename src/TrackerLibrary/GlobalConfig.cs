@@ -19,20 +19,25 @@ namespace TrackerLibrary
 
         public static IDataConnection Connection { get; private set; }
 
+        public static void InitializeConnections(IDataConnection db)
+        {
+            Connection = db;
+        }
+
         public static void InitializeConnections(DatabaseType db)
         {
-            if (db == DatabaseType.Sql)
-            {
-                //TODO - Set up the SQL Connecter properly
-                var sql = new SqlConnector();
-                Connection = sql;
-            }
-            else if (db == DatabaseType.TextFile)
-            {
-                //TODO - Create the Text Connections
-                var text = new TextConnection();
-                Connection = text;
-            }
+            //if (db == DatabaseType.Sql)
+            //{
+            //    //TODO - Set up the SQL Connecter properly
+            //    var sql = new SqlConnector();
+            //    Connection = sql;
+            //}
+            //else if (db == DatabaseType.TextFile)
+            //{
+            //    //TODO - Create the Text Connections
+            //    var text = new TextConnection();
+            //    Connection = text;
+            //}
         }
 
         public static string CnnString(string name)

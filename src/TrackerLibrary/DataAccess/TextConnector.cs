@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace TrackerLibrary.DataAccess
 {
+    // TODO - Rename TextConnection to match with file name
     public class TextConnection : IDataConnection
     {
         private readonly ILogger<TextConnection> _logger;
