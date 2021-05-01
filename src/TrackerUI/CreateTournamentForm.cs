@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,14 +19,18 @@ namespace TrackerUI
         List<TeamModel> availibleTeams = GlobalConfig.Connection.GetTeam_All();
         List<TeamModel> selectedTeams = new List<TeamModel>();
         List<PrizeModel> selectedPrizes = new List<PrizeModel>();
+        private readonly ILogger<CreateTournamentForm> _logger;
+        private readonly IServiceProvider _service;
 
         public object TorunamentModel { get; private set; }
 
-        public CreateTournamentForm()
+        public CreateTournamentForm(ILogger<CreateTournamentForm> logger, IServiceProvider service)
         {
             InitializeComponent();
 
             WireUpLists();
+            _logger = logger;
+            _service = service;
         }
 
         private void WireUpLists()
@@ -58,8 +64,9 @@ namespace TrackerUI
         private void createPrizeButton_Click(object sender, EventArgs e)
         {
             // Call the CreatePrizeForm
-            CreatePrizeForm frm = new CreatePrizeForm(this);
-            frm.Show();
+            var form = _service.GetService<CreatePrizeForm>();
+            form.SpecifyRequester(this);
+            form.Show();
         }
 
         public void PrizeComplete(PrizeModel model)
@@ -78,8 +85,9 @@ namespace TrackerUI
 
         private void createNewTeamLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            CreateTeamForm frm = new CreateTeamForm(this);
-            frm.Show();
+            var form = _service.GetService<CreateTeamForm>();
+            form.SpecifyRequester(this);
+            form.Show();
         }
 
         private void removeSelectedPlayersButton_Click(object sender, EventArgs e)
@@ -138,9 +146,9 @@ namespace TrackerUI
 
             tm.AlertUsersToNewRound();
 
-            TournamentViewerForm frm = new TournamentViewerForm();
-            frm.InitializeViewer(tm);
-            frm.Show();
+            TournamentViewerForm form = _service.GetService<TournamentViewerForm>();
+            form.InitializeViewer(tm);
+            form.Show();
             this.Close();
         }
     }

@@ -20,12 +20,6 @@ namespace TrackerUI
         private BindingList<MatchupModel> selectedMatchups = new BindingList<MatchupModel>();
         private readonly ILogger<TournamentViewerForm> _logger;
 
-        // TODO - Remove once DI is implemented
-        public TournamentViewerForm()
-        {
-            InitializeComponent();
-        }
-
         public TournamentViewerForm(ILogger<TournamentViewerForm> logger)
         {
             InitializeComponent();

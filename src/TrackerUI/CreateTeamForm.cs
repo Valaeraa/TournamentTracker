@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,16 +18,31 @@ namespace TrackerUI
         private List<PersonModel> availibleTeamMembers = GlobalConfig.Connection.GetPerson_All();
         private List<PersonModel> selectedTeamMembers = new List<PersonModel>();
         ITeamRequester callingForm;
+        private readonly ILogger<CreateTeamForm> _logger;
 
-        public CreateTeamForm(ITeamRequester caller)
+        public CreateTeamForm(ILogger<CreateTeamForm> logger)
         {
             InitializeComponent();
-            callingForm = caller;
-
-            //CreateSampleData();
 
             WireUpLists();
+            _logger = logger;
         }
+
+        public void SpecifyRequester(ITeamRequester caller)
+        {
+            callingForm = caller;
+            //WireUpLists();
+        }
+
+        //public CreateTeamForm(ITeamRequester caller)
+        //{
+        //    InitializeComponent();
+        //    callingForm = caller;
+
+        //    //CreateSampleData();
+
+        //    WireUpLists();
+        //}
 
         private void CreateSampleData()
         {

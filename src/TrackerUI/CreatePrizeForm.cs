@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,14 +16,26 @@ namespace TrackerUI
 {
     public partial class CreatePrizeForm : Form
     {
+        private readonly ILogger<CreatePrizeForm> _logger;
         IPrizeRequester callingForm;
 
-        public CreatePrizeForm(IPrizeRequester caller)
+        public CreatePrizeForm(ILogger<CreatePrizeForm> logger)
         {
             InitializeComponent();
+            _logger = logger;
+        }
 
+        public void SpecifyRequester(IPrizeRequester caller)
+        {
             callingForm = caller;
         }
+
+        //public CreatePrizeForm(IPrizeRequester caller)
+        //{
+        //    InitializeComponent();
+
+        //    callingForm = caller;
+        //}
 
         private void createPrizeButton_Click(object sender, EventArgs e)
         {

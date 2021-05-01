@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TrackerLibrary;
+using TrackerLibrary.DataAccess;
 
 namespace TrackerUI
 {
@@ -39,7 +40,7 @@ namespace TrackerUI
                 Application.SetCompatibleTextRenderingDefault(false);
 
                 // Initialize the database connections
-                GlobalConfig.InitializeConnections(DatabaseType.TextFile);
+                GlobalConfig.InitializeConnections(host.Services.GetService<IDataConnection>());
                 Application.Run(host.Services.GetService<TournamentDashboardForm>());
             }
             catch (Exception ex)
@@ -57,7 +58,14 @@ namespace TrackerUI
             return Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    // Set to sql or text file saving
+                    services.AddTransient<IDataConnection, TextConnection>();
                     services.AddTransient<TournamentDashboardForm>();
+                    services.AddTransient<CreateTournamentForm>();
+                    services.AddTransient<TournamentViewerForm>();
+                    services.AddTransient<CreatePrizeForm>();
+                    services.AddTransient<CreateTeamForm>();
+
 
                     services.AddSingleton<ILoggerFactory>(x =>
                     {
