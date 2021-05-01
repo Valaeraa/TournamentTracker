@@ -8,11 +8,19 @@ using TrackerLibrary.Models;
 using TrackerLibrary;
 using TrackerWebUI.Models;
 using TrackerWebUI.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace TrackerWebUI.Controllers
 {
     public class TournamentsController : Controller
     {
+        private readonly ILogger<TournamentsController> _logger;
+
+        public TournamentsController(ILogger<TournamentsController> logger)
+        {
+            _logger = logger;
+        }
+
         // GET: Tournaments
         public ActionResult Index()
         {
@@ -57,8 +65,9 @@ namespace TrackerWebUI.Controllers
                     TournamentLogic.UpdateTournamentResults(t);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "There was an error editing the tournament matchup.");
             }
 
             return RedirectToAction("Details", "Tournaments", new { id = model.TournamentId, roundId = model.RoundNumber });
@@ -113,8 +122,9 @@ namespace TrackerWebUI.Controllers
 
                 return View(input);
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "There was an error getting the details.");
 
                 return RedirectToAction("Index", "Home");
             }
@@ -173,6 +183,7 @@ namespace TrackerWebUI.Controllers
         }
 
         // GET: Tournaments/Create
+        [HttpGet]
         public ActionResult Create()
         {
             var input = new TournamentMVCCreateModel();
@@ -218,8 +229,10 @@ namespace TrackerWebUI.Controllers
                     return RedirectToAction("Create");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "There was an error creating the tournament");
+
                 return View();
             }
         }

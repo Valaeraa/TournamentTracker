@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,11 +18,22 @@ namespace TrackerUI
         private TournamentModel tournament;
         private BindingList<int> rounds = new BindingList<int>();
         private BindingList<MatchupModel> selectedMatchups = new BindingList<MatchupModel>();
+        private readonly ILogger<TournamentViewerForm> _logger;
 
-        public TournamentViewerForm(TournamentModel tournamentModel)
+        // TODO - Remove once DI is implemented
+        public TournamentViewerForm()
         {
             InitializeComponent();
+        }
 
+        public TournamentViewerForm(ILogger<TournamentViewerForm> logger)
+        {
+            InitializeComponent();
+            _logger = logger;
+        }
+
+        public void InitializeViewer(TournamentModel tournamentModel)
+        {
             tournament = tournamentModel;
 
             tournament.OnTournamentComplete += Tournament_OnTournamentComplete;
@@ -248,6 +260,7 @@ namespace TrackerUI
                         else
                         {
                             MessageBox.Show("Please enter a valid score for team 2.");
+                            _logger.LogWarning("Invalid score was entered for team 2. The score entered was '{score}'", teamTwoScoreValue.Text);
                             return;
                         }
                     }
@@ -261,6 +274,7 @@ namespace TrackerUI
             catch (Exception ex)
             {
                 MessageBox.Show($"The application had the following error: { ex.Message }");
+                _logger.LogError(ex, "The application had an error in the scoring");
                 return;
             }
 

@@ -138,7 +138,8 @@ namespace TrackerUI
 
             tm.AlertUsersToNewRound();
 
-            TournamentViewerForm frm = new TournamentViewerForm(tm);
+            TournamentViewerForm frm = new TournamentViewerForm();
+            frm.InitializeViewer(tm);
             frm.Show();
             this.Close();
         }
