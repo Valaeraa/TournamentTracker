@@ -1,4 +1,6 @@
 ﻿using Caliburn.Micro;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,13 +28,20 @@ namespace TrackerWPFUI.ViewModels
         private bool _addTeamIsVisible = false;
         private bool _selectedPrizesIsVisible = true;
         private bool _addPrizeIsVisible = false;
+        private readonly ILogger _logger;
+        private readonly IEventAggregator _eventAggregator;
+        private readonly IServiceProvider _service;
 
-        public CreateTournamentViewModel()
+        public CreateTournamentViewModel(ILogger logger, IEventAggregator eventAggregator, IServiceProvider service)
         {
             // Initialize the avalibleTeams list with all of the teams in our database/text files
             AvailibleTeams = new BindableCollection<TeamModel>(GlobalConfig.Connection.GetTeam_All());
 
-            EventAggregationProvider.TrackerEventAggregator.SubscribeOnPublishedThread(this);
+            //EventAggregationProvider.TrackerEventAggregator.SubscribeOnPublishedThread(this);
+            _logger = logger;
+            _eventAggregator = eventAggregator;
+            _service = service;
+            _eventAggregator.SubscribeOnPublishedThread(this);
         }
 
         public string TournamentName
@@ -192,7 +201,10 @@ namespace TrackerWPFUI.ViewModels
         public void CreateTeam()
         {
             // Create a new CreateTeamViewModel() and add it to the property
-            ActiveAddTeamView = new CreateTeamViewModel();
+            //ActiveAddTeamView = new CreateTeamViewModel();
+
+            var vm = _service.GetService<CreateTeamViewModel>();
+            ActiveAddTeamView = vm;
 
             // Items is a list of controls
             // Add the property to the items list
@@ -220,7 +232,9 @@ namespace TrackerWPFUI.ViewModels
 
         public void CreatePrize()
         {
-            ActiveAddPrizeView = new CreatePrizeViewModel();
+            //ActiveAddPrizeView = new CreatePrizeViewModel();
+            var vm = _service.GetService<CreatePrizeViewModel>();
+            ActiveAddPrizeView = vm;
 
             Items.Add(ActiveAddPrizeView);
 
@@ -284,7 +298,8 @@ namespace TrackerWPFUI.ViewModels
 
             tm.AlertUsersToNewRound();
 
-            await EventAggregationProvider .TrackerEventAggregator.PublishOnUIThreadAsync(tm);
+            //await EventAggregationProvider.TrackerEventAggregator.PublishOnUIThreadAsync(tm);
+            await _eventAggregator.PublishOnUIThreadAsync(tm);
 
             await TryCloseAsync();
         }
@@ -293,8 +308,11 @@ namespace TrackerWPFUI.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(message.TeamName))
             {
-                SelectedTeams.Add(message);
-                NotifyOfPropertyChange(() => CanCreateTournament);
+                await Task.Run(() => 
+                {
+                    SelectedTeams.Add(message);
+                    NotifyOfPropertyChange(() => CanCreateTournament);
+                });
             }
 
             SelectedTeamsIsVisible = true;
@@ -305,7 +323,7 @@ namespace TrackerWPFUI.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(message.PlaceName))
             {
-                SelectedPrizes.Add(message);
+                await Task.Run(() => SelectedPrizes.Add(message));
             }
 
             SelectedPrizesIsVisible = true;

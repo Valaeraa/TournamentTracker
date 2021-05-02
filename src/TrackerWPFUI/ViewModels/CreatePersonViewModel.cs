@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,20 @@ namespace TrackerWPFUI.ViewModels
 {
     public class CreatePersonViewModel : Screen
     {
+        private readonly ILogger<CreatePersonViewModel> _logger;
+        private readonly IEventAggregator _eventAggregator;
         private string _firstName = "";
         private string _lastName = "";
         private string _email = "";
         private string _cellphone = "";
         //private object emailValue;
+
+        public CreatePersonViewModel(ILogger<CreatePersonViewModel> logger, IEventAggregator eventAggregator)
+        {
+            _logger = logger;
+            _eventAggregator = eventAggregator;
+            _eventAggregator.SubscribeOnPublishedThread(this);
+        }
 
         public string FirstName
         {
@@ -62,7 +72,8 @@ namespace TrackerWPFUI.ViewModels
 
         public void CancelCreation()
         {
-            EventAggregationProvider.TrackerEventAggregator.PublishOnUIThreadAsync(new PersonModel());
+            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThreadAsync(new PersonModel());
+            _eventAggregator.PublishOnUIThreadAsync(new PersonModel());
 
             TryCloseAsync();
         }
@@ -91,7 +102,8 @@ namespace TrackerWPFUI.ViewModels
 
             GlobalConfig.Connection.CreatePerson(p);
             
-            EventAggregationProvider.TrackerEventAggregator.PublishOnUIThreadAsync(p);
+            //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThreadAsync(p);
+            _eventAggregator.PublishOnUIThreadAsync(p);
 
             TryCloseAsync();
         }

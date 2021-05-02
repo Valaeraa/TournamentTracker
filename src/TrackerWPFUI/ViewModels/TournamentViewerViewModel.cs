@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,14 +24,28 @@ namespace TrackerWPFUI.ViewModels
         private double _teamTwoScore;
         private MatchupModel _selectedMatchup;
         private int _selectedRound = 0;
+        private readonly ILogger<TournamentViewerViewModel> _logger;
 
-        public TournamentViewerViewModel(TournamentModel model)
+        public TournamentViewerViewModel(ILogger<TournamentViewerViewModel> logger)
+        {
+            _logger = logger;
+        }
+
+        public void SelectedTournamentRequester(TournamentModel model)
         {
             Tournament = model;
             TournamentName = model.TournamentName;
 
             LoadRounds();
         }
+
+        //public TournamentViewerViewModel(TournamentModel model)
+        //{
+        //    Tournament = model;
+        //    TournamentName = model.TournamentName;
+
+        //    LoadRounds();
+        //}
         
         public string TournamentName
         {

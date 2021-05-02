@@ -1,4 +1,6 @@
 ﻿using Caliburn.Micro;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +21,19 @@ namespace TrackerWPFUI.ViewModels
         private PersonModel _selectedTeamMemberToAdd;
         private BindableCollection<PersonModel> _selectedTeamMembers = new BindableCollection<PersonModel>();
         private PersonModel _selectedTeamMemberToRemove;
+        private readonly ILogger<CreateTeamViewModel> _logger;
+        private readonly IEventAggregator _eventAggregator;
+        private readonly IServiceProvider _service;
 
-        public CreateTeamViewModel()
+        public CreateTeamViewModel(ILogger<CreateTeamViewModel> logger, IEventAggregator eventAggregator, IServiceProvider service)
         {
             AvailibleTeamMembers = new BindableCollection<PersonModel>(GlobalConfig.Connection.GetPerson_All());
-            EventAggregationProvider.TrackerEventAggregator.SubscribeOnPublishedThread(this);
+            //EventAggregationProvider.TrackerEventAggregator.SubscribeOnPublishedThread(this);
+            _logger = logger;
+            _eventAggregator = eventAggregator;
+            _service = service;
+
+            _eventAggregator.SubscribeOnPublishedThread(this);
         }
 
         public string TeamName
@@ -113,7 +123,8 @@ namespace TrackerWPFUI.ViewModels
 
         public async Task CreateMember()
         {
-            await ActivateItemAsync(new CreatePersonViewModel());
+            var vm = _service.GetService<CreatePersonViewModel>();
+            await ActivateItemAsync(vm /*new CreatePersonViewModel()*/);
 
             SelectedTeamMembersIsVisible = false;
             AddPersonIsVisible = true;
@@ -137,7 +148,8 @@ namespace TrackerWPFUI.ViewModels
 
         public async Task CancelCreation()
         {
-            await EventAggregationProvider .TrackerEventAggregator.PublishOnUIThreadAsync(new TeamModel());
+            //await EventAggregationProvider .TrackerEventAggregator.PublishOnUIThreadAsync(new TeamModel());
+            await _eventAggregator.PublishOnUIThreadAsync(new TeamModel());
 
             await TryCloseAsync();
         }
@@ -173,8 +185,9 @@ namespace TrackerWPFUI.ViewModels
             };
 
             GlobalConfig.Connection.CreateTeam(t);
-            
-            await EventAggregationProvider.TrackerEventAggregator.PublishOnUIThreadAsync(t);
+
+            //await EventAggregationProvider.TrackerEventAggregator.PublishOnUIThreadAsync(t);
+            await _eventAggregator.PublishOnUIThreadAsync(t);
 
             await TryCloseAsync();
         }
