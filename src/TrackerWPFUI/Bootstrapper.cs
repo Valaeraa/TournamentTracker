@@ -10,6 +10,7 @@ using System.Windows;
 using TrackerWPFUI.ViewModels;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using TrackerLibrary.DataAccess;
 
 namespace TrackerWPFUI
 {
@@ -37,6 +38,12 @@ namespace TrackerWPFUI
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddTransient<ShellViewModel>();
+                    services.AddTransient<CreateTournamentViewModel>();
+                    services.AddTransient<TournamentViewerViewModel>();
+                    services.AddTransient<CreateTeamViewModel>();
+                    services.AddTransient<CreatePrizeViewModel>();
+                    services.AddTransient<CreatePersonViewModel>();
+                    services.AddTransient<IDataConnection, TextConnection>();
                     services.AddSingleton<IWindowManager, WindowManager>();
                     services.AddSingleton<IEventAggregator, EventAggregator>();
                     services.AddSingleton<ILoggerFactory>(x =>
@@ -71,7 +78,6 @@ namespace TrackerWPFUI
 
         protected override void BuildUp(object instance)
         {
-            
         }
     }
 }
