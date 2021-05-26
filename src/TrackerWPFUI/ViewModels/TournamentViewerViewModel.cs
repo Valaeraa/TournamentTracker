@@ -1,5 +1,5 @@
-﻿using Caliburn.Micro;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Stylet;
 using System;
 using System.Collections.Generic;
 using System.Linq;

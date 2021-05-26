@@ -1,5 +1,4 @@
-﻿using Caliburn.Micro;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -9,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TrackerLibrary;
 using TrackerLibrary.Models;
+using Stylet;
 
 namespace TrackerWPFUI.ViewModels
 {
@@ -41,7 +41,7 @@ namespace TrackerWPFUI.ViewModels
             _logger = logger;
             _eventAggregator = eventAggregator;
             _service = service;
-            _eventAggregator.SubscribeOnPublishedThread(this);
+            _eventAggregator.Subscribe(this);
         }
 
         public string TournamentName
@@ -277,7 +277,7 @@ namespace TrackerWPFUI.ViewModels
             }
         }
 
-        public async Task CreateTournament()
+        public void CreateTournament()
         {
             // Create our tournament model
             TournamentModel tm = new TournamentModel
@@ -299,31 +299,28 @@ namespace TrackerWPFUI.ViewModels
             tm.AlertUsersToNewRound();
 
             //await EventAggregationProvider.TrackerEventAggregator.PublishOnUIThreadAsync(tm);
-            await _eventAggregator.PublishOnUIThreadAsync(tm);
+            _eventAggregator.PublishOnUIThread(tm);
 
-            await TryCloseAsync();
+            RequestClose();
         }
 
-        public async Task HandleAsync(TeamModel message, CancellationToken cancellationToken)
+        public void Handle(TeamModel message)
         {
             if (!string.IsNullOrWhiteSpace(message.TeamName))
             {
-                await Task.Run(() => 
-                {
-                    SelectedTeams.Add(message);
-                    NotifyOfPropertyChange(() => CanCreateTournament);
-                });
+                SelectedTeams.Add(message);
+                NotifyOfPropertyChange(() => CanCreateTournament);
             }
 
             SelectedTeamsIsVisible = true;
             AddTeamIsVisible = false;
         }
 
-        public async Task HandleAsync(PrizeModel message, CancellationToken cancellationToken)
+        public void Handle(PrizeModel message)
         {
             if (!string.IsNullOrWhiteSpace(message.PlaceName))
             {
-                await Task.Run(() => SelectedPrizes.Add(message));
+                SelectedPrizes.Add(message);
             }
 
             SelectedPrizesIsVisible = true;

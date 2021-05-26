@@ -1,5 +1,5 @@
-﻿using Caliburn.Micro;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Stylet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +24,7 @@ namespace TrackerWPFUI.ViewModels
         {
             _logger = logger;
             _eventAggregator = eventAggregator;
-            _eventAggregator.SubscribeOnPublishedThread(this);
+            //_eventAggregator.Subscribe(this);
         }
 
         public string FirstName
@@ -73,9 +73,9 @@ namespace TrackerWPFUI.ViewModels
         public void CancelCreation()
         {
             //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThreadAsync(new PersonModel());
-            _eventAggregator.PublishOnUIThreadAsync(new PersonModel());
+            _eventAggregator.PublishOnUIThread(new PersonModel());
 
-            TryCloseAsync();
+            RequestClose();
         }
 
         public bool CanCreatePerson(string firstName, string lastName, string email, string cellphone)
@@ -103,9 +103,9 @@ namespace TrackerWPFUI.ViewModels
             GlobalConfig.Connection.CreatePerson(p);
             
             //EventAggregationProvider.TrackerEventAggregator.PublishOnUIThreadAsync(p);
-            _eventAggregator.PublishOnUIThreadAsync(p);
+            _eventAggregator.PublishOnUIThread(p);
 
-            TryCloseAsync();
+            RequestClose();
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using Caliburn.Micro;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Stylet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +20,7 @@ namespace TrackerWPFUI.ViewModels
         {
             _logger = logger;
             _eventAggregator = eventAggregator;
-            _eventAggregator.SubscribeOnPublishedThread(this);
+            //_eventAggregator.Subscribe(this);
         }
 
         private int _placeNumber;
@@ -71,12 +71,12 @@ namespace TrackerWPFUI.ViewModels
             }
         }
 
-        public async Task CancelCreation()
+        public void CancelCreation()
         {
             //await EventAggregationProvider.TrackerEventAggregator.PublishOnUIThreadAsync(new PrizeModel());
-            await _eventAggregator.PublishOnUIThreadAsync(new PrizeModel());
+            _eventAggregator.PublishOnUIThread(new PrizeModel());
 
-            await TryCloseAsync();
+            RequestClose();
         }
 
         public bool CanCreatePrize(int placeNumber, string placeName, decimal prizeAmount, double prizePercentage)
@@ -84,7 +84,7 @@ namespace TrackerWPFUI.ViewModels
             return ValidateForm(placeNumber, placeName, prizeAmount, prizePercentage);
         }
 
-        public async Task CreatePrize(int placeNumber, string placeName, decimal prizeAmount, double prizePercentage)
+        public void CreatePrize(int placeNumber, string placeName, decimal prizeAmount, double prizePercentage)
         {
             PrizeModel model = new PrizeModel
             {
@@ -97,9 +97,9 @@ namespace TrackerWPFUI.ViewModels
             GlobalConfig.Connection.CreatePrize(model);
 
             //await EventAggregationProvider .TrackerEventAggregator.PublishOnUIThreadAsync(model);
-            await _eventAggregator.PublishOnUIThreadAsync(model);
+            _eventAggregator.PublishOnUIThread(model);
 
-            await TryCloseAsync();
+            RequestClose();
         }
 
         private bool ValidateForm(int placeNumber, string placeName, decimal prizeAmount, double prizePercentage)

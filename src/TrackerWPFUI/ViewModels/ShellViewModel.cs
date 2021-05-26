@@ -1,5 +1,4 @@
-﻿using Caliburn.Micro;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -10,6 +9,7 @@ using System.Threading.Tasks;
 using TrackerLibrary;
 using TrackerLibrary.DataAccess;
 using TrackerLibrary.Models;
+using Stylet;
 
 namespace TrackerWPFUI.ViewModels
 {
@@ -18,11 +18,11 @@ namespace TrackerWPFUI.ViewModels
     {
         private BindableCollection<TournamentModel> _existingTournaments;
         private TournamentModel _selectedTournament;
-        private readonly ILogger<ShellViewModel> _logger;
+        //private readonly ILogger<ShellViewModel> _logger;
         private readonly IEventAggregator _eventAggregator;
         private readonly IServiceProvider _service;
 
-        public ShellViewModel(ILogger<ShellViewModel> logger, IEventAggregator eventAggregator, IDataConnection db, IServiceProvider service)
+        public ShellViewModel(/*ILogger<ShellViewModel> logger,*/ IEventAggregator eventAggregator, IDataConnection db, IServiceProvider service)
         {
             // Initialize the database connections
             GlobalConfig.InitializeConnections(db);
@@ -30,37 +30,33 @@ namespace TrackerWPFUI.ViewModels
             //EventAggregationProvider.TrackerEventAggregator.SubscribeOnPublishedThread(this);
 
             _existingTournaments = new BindableCollection<TournamentModel>(GlobalConfig.Connection.GetTournament_All());
-            _logger = logger;
+            //_logger = logger;
             _eventAggregator = eventAggregator;
-            _eventAggregator.SubscribeOnPublishedThread(this);
+            _eventAggregator.Subscribe(this);
             _service = service;
         }
 
-        public async Task CreateTournament()
+        public void CreateTournament()
         {
             var viewModel = _service.GetService<CreateTournamentViewModel>();
-            await ActivateItemAsync(viewModel);
+            ActivateItem(viewModel);
         }
 
-        public async Task LoadTournament()
+        public void LoadTournament()
         {
             if (SelectedTournament != null && !string.IsNullOrWhiteSpace(SelectedTournament.TournamentName))
             {
                 var viewModel = _service.GetService<TournamentViewerViewModel>();
                 viewModel.SelectedTournamentRequester(SelectedTournament);
 
-                await ActivateItemAsync(viewModel /*new TournamentViewerViewModel(SelectedTournament)*/);
+                ActivateItem(viewModel /*new TournamentViewerViewModel(SelectedTournament)*/);
             }
         }
 
-        public async Task HandleAsync(TournamentModel message, CancellationToken cancellationToken)
+        public void Handle(TournamentModel message)
         {
-            // Open the tournament viewer to the given tournament
-            await Task.Run(() =>
-            {
-                ExistingTournaments.Add(message);
-                SelectedTournament = message;
-            });
+            ExistingTournaments.Add(message);
+            SelectedTournament = message;
         }
 
         public BindableCollection<TournamentModel> ExistingTournaments
